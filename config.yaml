@@ -1,0 +1,14 @@
+USE_OLLAMA: true
+OLLAMA_MODEL: "qwen2.5:latest"
+MOUTH_AMPLIFY: 3
+
+TTS_MODEL: edgeTTS  # or voicevoxTTS
+
+edgeTTS:
+  voice: zh-CN-XiaoyiNeural
+  pitch: "+15Hz"
+
+voicevoxTTS:
+  speaker: 1
+  speed: 1.0
+  pitch: 0.0

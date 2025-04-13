@@ -1,0 +1,10 @@
+PyQt6
+PyQt6-WebEngine
+ollama 
+aiohttp
+qwebchannel==1.0.0  
+pydub
+playsound3   
+edge-tts  
+requests   
+YAML  

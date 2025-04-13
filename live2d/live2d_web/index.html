@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Live2D Viewer</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            background: transparent;
+            overflow: hidden;
+        }
+
+        canvas {
+            position: absolute;
+            pointer-events: auto;
+        }
+    </style>
+</head>
+
+<body style="margin: 0; overflow: hidden;">
+    <script src="./js/live2dcubismcore.min.js"></script>
+    <script src="./js/live2d.min.js"></script>
+    <script src="./js/pixi.min.js"></script>
+    <script src="./js/cubism4.min.js"></script>
+    <script src="./js/qwebchannel.js"></script>
+    <!--四个byd的js文件,直接将cubism的sdk文件中抽出来,剩下没有的直接cdn,引用不了就自己下载放到本地js目录下，我已经放好了就不用管了-->
+    <script>
+        let app;
+        let model;
+        //把这俩变量直接全局化，防止后面监听一直js报错
+        //因为一开始我将其作为局部变量来使用，导致其他几个监听用不了（ ╯▔皿▔）
+        let modelReady = false;
+        //新添加的变量，用来判断模型是否加载成功，
+        document.addEventListener("DOMContentLoaded", function () {
+            const canvas = document.body.appendChild(document.createElement("canvas"));
+            canvas.style.pointerEvents = "none";
+            //鼠标穿透事件，可以让鼠标穿透canvas，但奈何测试后canvas下所定义的元素依旧无法响应鼠标事件，现在依旧无法解决
+            app = new PIXI.Application({
+                view: canvas,//指定PIXI使用我们创建的canvas元素
+                transparent: true,//启用画布透明度支持
+                backgroundAlpha: 0,//设置背景完全透明
+                width: window.innerWidth,//设置渲染宽度为窗口内部宽度
+                height: window.innerHeight,//设置渲染高度为窗口内部高度
+                resolution: window.devicePixelRatio || 1,//适配高DPI屏幕，防止模型糊成shit
+                autoDensity: true//自动调整CSS尺寸匹配分辨率
+            });
+
+            const { Live2DModel } = PIXI.live2d;
+            //解构赋值PIXI.live2d，提出Live2DModel属性，传入模型的json文件路径
+            Live2DModel.from("model/Amiya/Amiya.model3.json").then(l2dModel => {
+                model = l2dModel;
+                model.anchor.set(0.5, 0.5);
+                const scaleFactor = window.innerHeight / model.height * 0.8;
+                model.scale.set(scaleFactor);
+                model.x = window.innerWidth / 2;
+                model.y = window.innerHeight / 2;
+                app.stage.addChild(model);
+                modelReady = true;
+                console.log("😊 Live2D 模型加载成功！");
+                //模型在窗口中位置的设置
+            }).catch(error => console.error("/(ㄒoㄒ)/~~Live2D 模型加载失败：", error));;
+
+            if (typeof qt !== 'undefined') {
+                new QWebChannel(qt.webChannelTransport, function (channel) {
+                    window.chatController = channel.objects.chatController;
+                    const tracker = channel.objects.mouseTracker;
+                    //这里是初始化WebChannel，绑定chatController和mouseTracker两个对象
+                    //两个对象是在main_window.py中registerObject注册的的，分别用来控制聊天和鼠标跟踪
+                    chatController.response_updated.connect(function (message) {
+                        if (message.startsWith("__MOUTH__:")) {
+                            const value = parseFloat(message.split(":")[1]);
+                            if (model?.internalModel?.coreModel) {
+                                model.internalModel.coreModel.setParameterValueById("ParamMouthOpenY", value);
+                            }
+                        } else {
+                            document.getElementById("response").textContent = message;
+                        }
+                        //这里是监听模型的mouthOpenY参数，当接收到消息时，修改模型参数，嘴部开张相应变化
+                    });
+
+                    tracker.mouseMoved.connect((x, y) => {
+                        const offsetX = (x - window.innerWidth / 2) / (window.innerWidth / 2);
+                        const offsetY = -(y - window.innerHeight / 2) / (window.innerHeight / 2);
+                        //这里是监听鼠标移动，根据鼠标位置修改模型参数，眼球还有头部跟随鼠标移动
+                        //MouseTracker函数来传递更新鼠标移动后的位置参数
+                        if (model?.internalModel?.coreModel) {
+                            const coreModel = model.internalModel.coreModel;
+                            coreModel.setParameterValueById("ParamAngleX", offsetX * 30);
+                            coreModel.setParameterValueById("ParamAngleY", offsetY * 30);
+                            coreModel.setParameterValueById("ParamEyeBallX", offsetX);
+                            coreModel.setParameterValueById("ParamEyeBallY", offsetY);
+                        }
+                    });
+
+                    console.log("WebChannel 初始化完成");
+                });
+            }
+        })
+    </script>
+
+    <div id="chat-box" style="
+        position: fixed;
+        bottom: 40px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.5);
+        color: white;
+        padding: 10px;
+        border-radius: 12px;
+        width: 80%;
+        font-family: sans-serif;
+        text-align: center;
+        z-index: 10;">
+        <div id="response">你好，我是阿米娅。</div>
+    </div>
+    <!-- WebChannel 绑定 -->
+</body>
+
+</html>

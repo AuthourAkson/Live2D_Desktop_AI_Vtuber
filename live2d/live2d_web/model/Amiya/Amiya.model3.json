@@ -1,0 +1,23 @@
+{
+	"Version": 3,
+	"FileReferences": {
+		"Moc": "Amiya.moc3",
+		"Textures": [
+			"Amiya.8192/texture_00.png"
+		],
+		"Physics": "Amiya.physics3.json",
+		"DisplayInfo": "Amiya.cdi3.json"
+	},
+	"Groups": [
+		{
+			"Target": "Parameter",
+			"Name": "LipSync",
+			"Ids": []
+		},
+		{
+			"Target": "Parameter",
+			"Name": "EyeBlink",
+			"Ids": []
+		}
+	]
+}

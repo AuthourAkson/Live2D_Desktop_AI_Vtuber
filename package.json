@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "pixi-live2d-display": "^0.4.0"
+  }
+}
