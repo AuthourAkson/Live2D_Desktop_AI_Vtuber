@@ -1,5 +1,6 @@
 # 🐾 AUAK Live2D Desktop AI Vtuber
 此项目是基于以前的老项目(未公开)，大约有一半以上进行了重构
+
 一个基于 **PyQt6 + Live2D + Ollama + 多种 TTS + js + python +pyttsx3 + pydub + qwebchannel + deepseek等api代理选项（扩展中）** 的桌面 AI 助手项目，支持透明悬浮窗口、Live2D 虚拟角色、本地大语言模型聊天、语音合成（TTS），并实现了角色嘴型联动、眼睛/头部追踪鼠标等自然交互效果。
 
 ![screenshot](./screenshots/demo.png)
@@ -59,10 +60,8 @@ ollama 模型下载地址：https://ollama.com/download/
 voicevox 模型下载地址：https://voicevox.hiroshiba.jp/
 Amiya免费模型原视频地址：https://www.bilibili.com/video/BV1bCQWYpESX/?spm_id_from=333.337.search-card.all.click&vd_source=03b8bea42a644cbe2e9c36aaeb3f8806
 
-📸 效果预览
-<video src="/screenshots/demo.mp4" controls width="640" height="360"></video>
-
-顺带一说，明日方舟真好玩🤪
+📸 效果预览：
+https://www.bilibili.com/video/BV1QXo7YSEV2/?spm_id_from=333.1387.upload.video_card.click&vd_source=03b8bea42a644cbe2e9c36aaeb3f8806
 
 @一条咸鱼 我知道你在看着我ο(=•ω＜=)ρ⌒☆
 
