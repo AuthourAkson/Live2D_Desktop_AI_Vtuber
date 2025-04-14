@@ -20,8 +20,8 @@
 
 请先确保你已安装 Python 3.10+ 和 `pip`，并确保本地已安装以下工具：
 
-- ✅ **Ollama**（https://ollama.com）支持运行大模型
-- ✅ **mpv**（用于播放语音）
+- ✅ **Ollama**（https://ollama.com）支持下载LLM到本地
+- ✅ **mpv**（用于播放语音）（https://mpv.io/installation/）
 - ✅ **Edge TTS**（https://www.edge-tts.com）或 **VoiceVox**（https://voicevox.ai）#当前加入的语音合成工具，可根据之后的扩展下载其它的 TTS 
 
 ```bash
@@ -34,12 +34,13 @@ python main.py
 ## ⚙️ 配置文件
 
 配置文件位于 `config.yaml`：
+
 USE_OLLAMA: true
 OLLAMA_MODEL: "qwen2.5:latest"
 
 MOUTH_AMPLIFY: 3
 
-TTS_MODEL: edgeTTS     # 可选：edgeTTS / voicevoxTTS / pyttsx3TTS ...
+TTS_MODEL: edgeTTS     # 可选：edgeTTS / voicevoxTTS / pyttsx3TTS ...（还在扩展中）
 
 edgeTTS_MODEL: zh-CN-XiaoyiNeural
 edgeTTS_VOICE: "+15Hz"
@@ -52,12 +53,14 @@ VOICEVOX:
 ## 📦 模型和资源说明
 Live2D 模型路径：live2d/live2d_web/model/Amiya/
 
-初始设定文件：prompt/Amiya.txt（可替换为其他角色）
+初始设定文件：prompt/Amiya.txt（可自行建立数据集）
 
 支持多种模型如 llama3, qwen2.5, gemma, mistral，可在 Ollama 中自定义。
 
 ollama 模型下载地址：https://ollama.com/download/
+
 voicevox 模型下载地址：https://voicevox.hiroshiba.jp/
+
 Amiya免费模型原视频地址：https://www.bilibili.com/video/BV1bCQWYpESX/?spm_id_from=333.337.search-card.all.click&vd_source=03b8bea42a644cbe2e9c36aaeb3f8806
 
 📸 效果预览：
