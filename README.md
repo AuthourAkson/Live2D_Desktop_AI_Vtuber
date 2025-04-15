@@ -22,8 +22,8 @@
 
 - ✅ **Ollama**（https://ollama.com）支持下载LLM到本地
 - ✅ **mpv**（用于播放语音）
-- ✅ **Edge TTS**（https://www.edge-tts.com）或 **VoiceVox**（https://voicevox.ai）#当前加入的语音合成工具，可根据之后的扩展下载其它的 TTS 
-
+- ✅ **Edge TTS**（https://www.edge-tts.com）或 **VoiceVox**（https://voicevox.ai）#当前加入的语音合成工具，可根据之后的扩展下载其它的 TTS
+PS. 此项目直接使用的python edge-tts包，之后项目会加入支持本地Edge TTS的功能（前提你电脑显存够用）
 ```bash
 pip install -r requirements.txt
 ```
