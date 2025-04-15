@@ -21,7 +21,7 @@
 请先确保你已安装 Python 3.10+ 和 `pip`，并确保本地已安装以下工具：
 
 - ✅ **Ollama**（https://ollama.com）支持下载LLM到本地
-- ✅ **mpv**（用于播放语音）（https://mpv.io/installation/）
+- ✅ **mpv**（用于播放语音）
 - ✅ **Edge TTS**（https://www.edge-tts.com）或 **VoiceVox**（https://voicevox.ai）#当前加入的语音合成工具，可根据之后的扩展下载其它的 TTS 
 
 ```bash
