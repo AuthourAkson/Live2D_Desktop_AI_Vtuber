@@ -65,8 +65,8 @@ voicevox 模型下载地址：https://voicevox.hiroshiba.jp/
 Amiya免费模型原视频地址：https://www.bilibili.com/video/BV1bCQWYpESX/?spm_id_from=333.337.search-card.all.click&vd_source=03b8bea42a644cbe2e9c36aaeb3f8806
 
 📸 效果预览：
-【自写live2D桌面AI演示demo-哔哩哔哩】 https://b23.tv/mGqRilZb3f8806
-
+【自写live2D桌面AI演示demo-哔哩哔哩】
+https://www.bilibili.com/video/BV1nC5az5ERF/?spm_id_from=333.1387.homepage.video_card.click&vd_source=03b8bea42a644cbe2e9c36aaeb3f8806
 @一条咸鱼 我知道你在看着我捏
 
 
