@@ -1,0 +1,17 @@
+node_modules/
+asr/models/
+asr/__pycache__/
+*.pyc
+*.pyo
+__pycache__/
+models/
+*.tmp
+tts/__pycache__/
+ui/__pycache__/
+*.pth
+*.onnx
+live2d/model/
+.venv/
+venv/
+.idea/
+.vscode/

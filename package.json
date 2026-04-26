@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@babylonjs/core": "^8.27.1",
+    "@babylonjs/havok": "^1.3.10",
+    "babylon-mmd": "^0.68.0",
+    "pixi-live2d-display": "^0.4.0"
+  }
+}

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Live2D Viewer</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            background: transparent;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #fff;
+        }
+
+        canvas {
+            position: absolute;
+        }
+
+        /* 既然是桌宠，控制面板得精致点 */
+        .control-panel {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 30;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: auto;
+        }
+
+        .panel-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .draggable-handle {
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            cursor: move;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .draggable-handle:active {
+            transform: scale(0.95);
+        }
+
+        #mic-button {
+            background: linear-gradient(135deg, #0288D1, #0277BD);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        #chat-box {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 20px;
+            width: 80%;
+            max-width: 400px;
+            text-align: center;
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+
+<body>
+    <script src="./js/live2dcubismcore.min.js"></script>
+    <script src="./js/live2d.min.js"></script>
+    <script src="./js/pixi.min.js"></script>
+    <script src="./js/cubism4.min.js"></script>
+    <script src="./js/qwebchannel.js"></script>
+     <!--四个byd的js文件,直接将cubism的sdk文件中抽出来,剩下没有的直接cdn,引用不了就自己下载放到本地js目录下，我已经放好了就不用管了-->
+    <script>
+        let app;
+        let model;
+         //把这俩变量直接全局化，防止后面监听一直js报错
+        //因为一开始我将其作为局部变量来使用，导致其他几个监听用不了（ ╯▔皿▔）
+        let modelReady = false;
+        //新添加的变量，用来判断模型是否加载成功，
+        let audioHandler = null;
+       
+        //初始化 PIXI 渲染引擎
+        document.addEventListener("DOMContentLoaded", function () {
+            const canvas = document.body.appendChild(document.createElement("canvas"));
+            //鼠标穿透事件，可以让鼠标穿透canvas，但奈何测试后canvas下所定义的元素依旧无法响应鼠标事件，现在依旧无法解决
+            /* 原本是已经实现了拖拽透明层的逻辑，若是添加拖拽元素则得重新写一套逻辑，
+            但overlay的嵌套又会导致mic无法穿透点击，所以取了后者的解决方案 */
+            app = new PIXI.Application({
+                view: canvas,//指定PIXI使用我们创建的canvas元素
+                transparent: true,//启用画布透明度支持
+                backgroundAlpha: 0,//设置背景完全透明
+                width: window.innerWidth,//设置渲染宽度为窗口内部宽度
+                height: window.innerHeight,//设置渲染高度为窗口内部高度
+                resolution: window.devicePixelRatio || 1,//适配高DPI屏幕，防止模型糊成shit
+                autoDensity: true//自动调整CSS尺寸匹配分辨率
+            });
+
+            /* ⚠️：这里删掉了之前硬编码加载“live2d模型”的代码，
+            原本是解构赋值PIXI.live2d，提出Live2DModel属性，传入模型的json文件路径*/
+           //现在页面启动是空的，全等后端这边发指令。
+
+            if (typeof qt !== 'undefined') {
+                new QWebChannel(qt.webChannelTransport, function (channel) {
+                    window.chatController = channel.objects.chatController;
+                    const tracker = channel.objects.mouseTracker;
+                    //这里是初始化WebChannel，绑定chatController和mouseTracker两个对象
+                    //两个对象是在main_window.py中registerObject注册的的，分别用来控制聊天和鼠标跟踪
+                    audioHandler = channel.objects.audioHandler;
+                    const windowController = channel.objects.windowController;
+
+                    //这里的消息处理逻辑保持不变
+                    chatController.response_updated.connect(function (message) {
+                        if (message.startsWith("__MOUTH__:")) {
+                            const value = parseFloat(message.split(":")[1]);
+                            if (model?.internalModel?.coreModel) {
+                                model.internalModel.coreModel.setParameterValueById("ParamMouthOpenY", value);
+                            }
+                        } else {
+                            document.getElementById("response").textContent = message;
+                        }
+                        //这里是监听模型的mouthOpenY参数，当接收到消息时，修改模型参数，嘴部开张相应变化
+                    });
+
+                    // 视线追踪逻辑
+                    tracker.mouseMoved.connect((x, y) => {
+                        if (!modelReady || !model) return;
+                        const offsetX = (x - window.innerWidth / 2) / (window.innerWidth / 2);
+                        const offsetY = -(y - window.innerHeight / 2) / (window.innerHeight / 2);
+                        //这里是监听鼠标移动，根据鼠标位置修改模型参数，眼球还有头部跟随鼠标移动
+                        //MouseTracker函数来传递更新鼠标移动后的位置参数
+                        if (model.internalModel?.coreModel) {
+                            const coreModel = model.internalModel.coreModel;
+                            coreModel.setParameterValueById("ParamAngleX", offsetX * 30);
+                            coreModel.setParameterValueById("ParamAngleY", offsetY * 30);
+                            coreModel.setParameterValueById("ParamEyeBallX", offsetX);
+                            coreModel.setParameterValueById("ParamEyeBallY", offsetY);
+                        }
+                    });
+
+                    // 窗口拖拽
+                    if (windowController) {
+                        const handle = document.getElementById('draggable-handle');
+                        let isDragging = false;
+                        handle.onmousedown = (e) => { isDragging = true; windowController.start_drag(); };
+                        document.onmousemove = (e) => { if (isDragging) windowController.drag(); };
+                        document.onmouseup = () => { if (isDragging) { isDragging = false; windowController.end_drag(); } };
+                    }
+
+                    // 麦克风逻辑保持原样
+                    setupMicLogic();
+                });
+            }
+        });
+
+        //核心：动态切换模型函数
+        window.changeModel = function (modelPath) {
+            console.log("Loading model from:", modelPath);
+
+            if (model) {
+                app.stage.removeChild(model);
+                //彻底释放内存和 WebGL 纹理，解决闪烁的关键
+                model.destroy({ children: true, texture: true, baseTexture: true });
+                model = null;
+                modelReady = false;
+            }
+
+            const { Live2DModel } = PIXI.live2d;
+            Live2DModel.from(modelPath).then(l2dModel => {
+                model = l2dModel;
+                model.anchor.set(0.5, 0.5);
+
+                //自动缩放逻辑
+                //计算模型在不超出窗口的情况下的最大缩放比例
+                //假设我们希望模型占据窗口高度的 80%
+                const targetHeight = window.innerHeight * 0.80;
+                const scaleFactor = targetHeight / model.height;
+
+                model.scale.set(scaleFactor);
+ 
+
+                model.x = window.innerWidth / 2;
+                model.y = window.innerHeight / 2;
+
+                app.stage.addChild(model);
+                modelReady = true;
+
+                if (model.internalModel.motionManager) {
+                    model.internalModel.motionManager.startRandomMotion("Idle");
+                }
+            }).catch(err => {
+                console.error("加载模型炸了:", err);
+            });
+        };
+
+        function setupMicLogic() {
+            const micButton = document.getElementById("mic-button");
+            let micToggle = false;
+            let audioCtx, source, processor;
+
+            micButton.onclick = async () => {
+                micToggle = !micToggle;
+                if (micToggle) {
+                    micButton.textContent = "🎙️ Mic is On";
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    audioCtx = new AudioContext({ sampleRate: 16000 });
+                    source = audioCtx.createMediaStreamSource(stream);
+                    processor = audioCtx.createScriptProcessor(512, 1, 1);
+                    processor.onaudioprocess = (e) => {
+                        const pcm = e.inputBuffer.getChannelData(0);
+                        if (audioHandler) audioHandler.processAudio(Array.from(pcm));
+                    };
+                    source.connect(processor);
+                    processor.connect(audioCtx.destination);
+                } else {
+                    micButton.textContent = "❌ Mic is Off";
+                    if (audioCtx) audioCtx.close();
+                }
+            };
+        }
+    </script>
+
+    <div id="chat-box">
+        <div id="response">来跟我聊聊吧...!</div>
+    </div>
+
+    <div class="control-panel">
+        <div class="panel-row">
+            <div id="draggable-handle" class="draggable-handle">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="5 9 2 12 5 15" />
+                    <polyline points="9 5 12 2 15 5" />
+                    <polyline points="15 19 12 22 9 19" />
+                    <polyline points="19 9 22 12 19 15" />
+                    <line x1="2" x2="22" y1="12" y2="12" />
+                    <line x1="12" x2="12" y1="2" y2="22" />
+                </svg>
+            </div>
+            <button id="mic-button">❌ Mic is Off</button>
+        </div>
+    </div>
+</body>
+
+</html>

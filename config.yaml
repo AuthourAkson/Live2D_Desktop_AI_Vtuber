@@ -1,0 +1,49 @@
+USE_OLLAMA: false
+OLLAMA_MODEL: "qwen2.5:latest"
+MOUTH_AMPLIFY: 3
+
+USE_CUSTOM_API: true
+CUSTOM_API_URL: "https://api.siliconflow.cn/v1/chat/completions" #"http://your-custom-api-endpoint.com/v1/chat/completions"
+CUSTOM_API_KEY: "sk-twtkdgchnpukyandmvwmxtbbpgbuwijviubzirofitkqoyzs" 
+CUSTOM_API_MODEL: "Pro/deepseek-ai/DeepSeek-V3.2" 
+
+CHARA_MODEL: "live2d"  #或"mmd","live2d"，"vrm"
+TTS_MODEL: edgeTTS  #or voicevoxTTS gptsovitsTTS edgeTTS
+
+# Live2D模型配置
+# 填写模型文件夹名称，系统会自动拼接路径为: live2d_web/model/{live2d_model}/{live2d_model}.model3.json
+# 例如：填写"森亚露露卡"，则路径为 live2d_web/model/森亚露露卡/森亚露露卡.model3.json
+# 现在可以在运行时该字段可以动态修改并加载
+live2d_model: "Amiya"
+
+
+edgeTTS:
+  voice: zh-CN-XiaoyiNeural 
+  pitch: "+30Hz"
+
+voicevoxTTS:
+  speaker: 1
+  speed: 1.0
+  pitch: 0.0
+
+gptsovitsTTS:
+  api_base_url: "http://localhost:9880/tts" #GPT-SoVITS API 的地址，即在gptsovits中开启api_v2
+  ref_audio_path: "D:/AUAK_Live2D_Desktop_AI/assets/Amiya.wav" 
+  text_lang: "zh" #"zh", "ja", "en", "ko"
+  prompt_lang: "zh" #"zh", "ja", "en", "ko"
+  prompt_text: "博士整理一下航程信息吧"
+  speed_factor: 1.0 
+
+GPT_SOVITS_API_PATH: "D:/GPT-Sovits-Main" #where ur GPT-SoVITS-Main set 
+
+ASR_MODEL: "Faster-Whisper"
+
+Faster-Whisper:
+  model_path: "large-v3"
+  download_root: "asr/models"
+  language: "zh"
+  device: "cuda"
+
+VRM_MODEL_PATH: "models/Amiya.vrm"
+MMD_MODEL_PATH: "models/your_mmd_model.pmx"
+MMD_ANIMATION_PATH: "models/your_mmd_animation.vmd"  

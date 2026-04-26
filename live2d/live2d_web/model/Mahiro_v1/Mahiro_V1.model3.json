@@ -1,0 +1,26 @@
+{
+	"Version": 3,
+	"FileReferences": {
+		"Moc": "Mahiro_V1.moc3",
+		"Textures": [
+			"Mahiro_V1.8192/texture_00.png"
+		],
+		"Physics": "Mahiro_V1.physics3.json",
+		"DisplayInfo": "Mahiro_V1.cdi3.json"
+	},
+	"Groups": [
+		{
+			"Target": "Parameter",
+			"Name": "EyeBlink",
+			"Ids": [
+				"ParamEyeLOpen",
+				"ParamEyeROpen"
+			]
+		},
+		{
+			"Target": "Parameter",
+			"Name": "LipSync",
+			"Ids": []
+		}
+	]
+}

@@ -1,0 +1,26 @@
+{
+	"Version": 3,
+	"FileReferences": {
+		"Moc": " Mihari_V1.moc3",
+		"Textures": [
+			" Mihari_V1.4096/texture_00.png"
+		],
+		"Physics": " Mihari_V1.physics3.json",
+		"DisplayInfo": " Mihari_V1.cdi3.json"
+	},
+	"Groups": [
+		{
+			"Target": "Parameter",
+			"Name": "EyeBlink",
+			"Ids": [
+				"ParamEyeLOpen",
+				"ParamEyeROpen"
+			]
+		},
+		{
+			"Target": "Parameter",
+			"Name": "LipSync",
+			"Ids": []
+		}
+	]
+}

@@ -1,0 +1,26 @@
+{
+	"Version": 3,
+	"FileReferences": {
+		"Moc": "真寻2_GG.moc3",
+		"Textures": [
+			"真寻2_GG.8192/texture_00.png"
+		],
+		"Physics": "真寻2_GG.physics3.json",
+		"DisplayInfo": "真寻2_GG.cdi3.json"
+	},
+	"Groups": [
+		{
+			"Target": "Parameter",
+			"Name": "EyeBlink",
+			"Ids": [
+				"ParamEyeLOpen",
+				"ParamEyeROpen"
+			]
+		},
+		{
+			"Target": "Parameter",
+			"Name": "LipSync",
+			"Ids": []
+		}
+	]
+}

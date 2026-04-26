@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Babylon.js MMD Demo</title>
+    <style>
+        html, body {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        canvas {
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+        }
+    </style>
+    <!-- 引入 Babylon.js CDN -->
+    <script src="js/babylon.js"></script>
+    <script src="js/babylon.glTF2FileLoader.min.js"></script>
+</head>
+<body>
+    <canvas id="renderCanvas"></canvas>
+    <script>
+        // 获取 canvas
+        const canvas = document.getElementById("renderCanvas");
+
+        // 初始化 Babylon 引擎
+        const engine = new BABYLON.Engine(canvas, true);
+
+        // 创建场景
+        const createScene = async function () {
+            const scene = new BABYLON.Scene(engine);
+
+            // 添加相机（ArcRotateCamera 可以旋转缩放）
+            const camera = new BABYLON.ArcRotateCamera(
+                "camera",
+                Math.PI / 2, Math.PI / 2.5,
+                5, BABYLON.Vector3.Zero(),
+                scene
+            );
+            camera.attachControl(canvas, true);
+
+            // 添加光源
+            const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
+            light.intensity = 1.2;
+
+            // 加载 GLB 模型
+            await BABYLON.SceneLoader.AppendAsync("./", "puniru.glb", scene);
+
+            // 环境（天空盒/地板）
+            const env = scene.createDefaultEnvironment({
+                enableGroundShadow: true,
+                groundYBias: 1
+            });
+            env.setMainColor(new BABYLON.Color3(0.5, 0.5, 0.7));
+
+            return scene;
+        };
+
+        // 创建并运行场景
+        createScene().then(scene => {
+            engine.runRenderLoop(() => {
+                scene.render();
+            });
+        });
+
+        // 自适应窗口大小
+        window.addEventListener("resize", () => {
+            engine.resize();
+        });
+    </script>
+</body>
+</html>
