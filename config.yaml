@@ -4,7 +4,7 @@ MOUTH_AMPLIFY: 3
 
 USE_CUSTOM_API: true
 CUSTOM_API_URL: "https://api.siliconflow.cn/v1/chat/completions" #"http://your-custom-api-endpoint.com/v1/chat/completions"
-CUSTOM_API_KEY: "sk-twtkdgchnpukyandmvwmxtbbpgbuwijviubzirofitkqoyzs" 
+CUSTOM_API_KEY: "sk-abc" 
 CUSTOM_API_MODEL: "Pro/deepseek-ai/DeepSeek-V3.2" 
 
 CHARA_MODEL: "live2d"  #或"mmd","live2d"，"vrm"
